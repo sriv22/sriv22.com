@@ -63,14 +63,16 @@
   .btn:active { background: var(--terra-d); }
   .btn.ghost { background: transparent; color: var(--terra); border: 2px solid var(--terra); }
 
-  .votebox {
-    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
-    padding: 18px; box-shadow: 0 2px 10px rgba(59,45,36,.06);
+  .votebtn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; min-height: 52px; margin-top: 10px; padding: 10px 14px;
+    border: 2px solid var(--terra); border-radius: 14px; background: #fff;
+    font-family: inherit; font-size: 17px; font-weight: 800; color: var(--terra);
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
   }
-  .votebox iframe {
-    width: 100%; min-height: 860px; border: 1px solid var(--line); border-radius: 12px;
-    background: #fff; margin-top: 12px;
-  }
+  .votebtn[aria-pressed="true"] { background: var(--terra); color: #fff; }
+  .votebtn:disabled { opacity: .55; cursor: wait; }
+  .votebtn .vcount { font-size: 15px; font-weight: 700; }
   .vote-names { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
   .vote-names span {
     background: var(--sand); border: 1px solid var(--line); border-radius: 999px;
@@ -146,19 +148,8 @@
 </section>
 
 <section>
-  <h2 class="section-title">Vote for your favorites 🗳️</h2>
-  <p class="section-sub">Tap Yes on every place you like. Votes are anonymous — everyone sees the live totals right here.</p>
-  <div class="votebox">
-    <iframe id="pollFrame" title="Sedona Airbnb vote" loading="lazy"></iframe>
-    <div style="margin-top:12px; text-align:center;">
-      <a class="btn ghost" id="pollLink" href="#">Open the vote in a new tab →</a>
-    </div>
-  </div>
-</section>
-
-<section>
   <h2 class="section-title">The 15 options</h2>
-  <p class="section-sub">Ranked by value for 5 people. The booked cottage above is our home base — these are the backups.</p>
+  <p class="section-sub">Ranked by value for 5 people. The booked cottage above is our home base — these are the backups.<br>Tap <b>♥</b> on any card to vote. Tallies are live for everyone, votes are anonymous, tap again to undo.</p>
   <div id="list"></div>
 </section>
 
@@ -168,9 +159,73 @@
 </footer>
 
 <script>
-const POLL_URL = "https://cryptpad.fr/form/#/2/form/view/8G--sNnwO62Gr9norwlaGZQt+m4OmNZU+wTuhrvjV1M/";
-document.getElementById("pollFrame").src = POLL_URL;
-document.getElementById("pollLink").href = POLL_URL;
+// Per-card anonymous voting. Tallies live in a shared store so everyone sees live counts.
+const VOTE_API = "https://crudcrud.com/api/44f7f899811442a481db44b2923eb6aa/votes";
+let voterId = null, ballotId = null, myPicks = new Set(), tallies = {};
+try {
+  voterId = localStorage.getItem("sedona_voter");
+  ballotId = localStorage.getItem("sedona_ballot");
+} catch (e) {}
+function newId(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : "v-"+Date.now()+"-"+Math.random().toString(16).slice(2); }
+
+async function refreshVotes(){
+  try {
+    const docs = await (await fetch(VOTE_API)).json();
+    tallies = {};
+    let mine = null;
+    docs.forEach(d => {
+      (d.picks || []).forEach(r => { tallies[r] = (tallies[r] || 0) + 1; });
+      if (voterId && d.voter === voterId) mine = d;
+    });
+    if (mine) {
+      ballotId = mine._id;
+      try { localStorage.setItem("sedona_ballot", ballotId); } catch (e) {}
+      myPicks = new Set(mine.picks || []);
+    }
+    paintVotes();
+  } catch (e) {
+    document.querySelectorAll(".votebtn .vcount").forEach(s => { s.textContent = "votes unavailable"; });
+  }
+}
+function paintVotes(){
+  document.querySelectorAll(".votebtn").forEach(b => {
+    const r = b.dataset.room, n = tallies[r] || 0, has = myPicks.has(r);
+    b.setAttribute("aria-pressed", has ? "true" : "false");
+    b.querySelector(".vcount").textContent = n + (n === 1 ? " vote" : " votes") + (has ? " · yours" : "");
+  });
+}
+async function toggleVote(btn){
+  const room = btn.dataset.room;
+  if (!room) return;
+  btn.disabled = true;
+  try {
+    if (!voterId) { voterId = newId(); try { localStorage.setItem("sedona_voter", voterId); } catch (e) {} }
+    const picks = new Set(myPicks);
+    if (picks.has(room)) picks.delete(room); else picks.add(room);
+    const payload = { voter: voterId, picks: [...picks], updated: Date.now() };
+    if (ballotId) {
+      const res = await fetch(VOTE_API + "/" + ballotId, {
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+      });
+      if (res.status === 404) ballotId = null; // ballot vanished server-side; recreate below
+      else if (!res.ok) throw new Error("save failed");
+    }
+    if (!ballotId) {
+      const d = await (await fetch(VOTE_API, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+      })).json();
+      ballotId = d._id;
+      try { localStorage.setItem("sedona_ballot", ballotId); } catch (e) {}
+    }
+    myPicks = picks;
+  } catch (e) { /* keep old state; counts will refresh */ }
+  btn.disabled = false;
+  refreshVotes();
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest(".votebtn");
+  if (b) toggleVote(b);
+});
 
 const LISTINGS = [
 {rank:1, title:"Millie's Manor", url:"https://www.airbnb.com/rooms/1394980457892371620",
@@ -313,9 +368,12 @@ LISTINGS.forEach(l => {
       ${caveat}
       <div class="vibe">${l.vibe}</div>
       <a class="btn" href="${l.url}">View on Airbnb →</a>
+      <button class="votebtn" data-room="${(l.url.match(/rooms\/(\d+)/)||[])[1]}" aria-pressed="false"><span aria-hidden="true">♥</span> <span class="vcount">…</span></button>
     </div>
   </div>`);
 });
+refreshVotes();
+setInterval(refreshVotes, 45000);
 </script>
 </body>
 </html>
