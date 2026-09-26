@@ -63,6 +63,15 @@
     border: 1px dashed #d9d4ee; border-radius: 12px; background: #fbfbfe;
   }
   a { color: inherit; }
+  .filterbar { display: flex; gap: 8px; padding: 14px 22px 0; position: sticky; top: 0; background: #fff; z-index: 5; }
+  .fbtn { flex: 1; border: 1.5px solid #ddd3f8; background: #fff; border-radius: 999px; padding: 9px 0; font-size: 13.5px; font-weight: 800; color: #7c3aed; cursor: pointer; font-family: inherit; }
+  .fbtn.on { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+  body.together .slot:not([data-nick]) { display: none; }
+  .nicktag {
+    display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: 1px;
+    color: #0b6e5d; background: #e2f4ee; border-radius: 6px; padding: 2px 8px;
+    text-transform: uppercase; vertical-align: middle; white-space: nowrap;
+  }
 </style>
 </head>
 <body>
@@ -70,8 +79,13 @@
 <header>
   <div class="kicker">Austin City Limits 2026</div>
   <h1>Sri's Weekend 2 Plan</h1>
-  <p>Oct 9–11 · Zilker Park, Austin · built from your Spotify</p>
+  <p>Oct 9–11 · Zilker Park, Austin · built from your Spotify · <a href="https://www.nickkortendick.com/acl-2026/">Nick's plan ↗</a></p>
 </header>
+
+<div class="filterbar">
+  <button class="fbtn on" data-f="all">Full plan</button>
+  <button class="fbtn" data-f="together">👥 Together · 12</button>
+</div>
 
 <!-- FRIDAY -->
 <div class="day">
@@ -86,43 +100,43 @@
       <div class="vsmark">VS</div>
       <div class="opt"><div class="who">Charli XCX</div><div class="when">8:35 · Amex</div></div>
     </div>
-    <div class="nudge">You want both — catch Kings of Leon 8:15–9:05 at T-Mobile, then cross the park for Charli 9:10–10:00 at Amex.</div>
+    <div class="nudge">You want both — catch Kings of Leon 8:15–9:05 at T-Mobile, then cross the park for Charli 9:10–10:00 at Amex. Nick's with you for Natasha Bedingfield and Charli; he's at Chainsmokers 7:30–8:30 while you're at Leon Thomas.</div>
   </div>
 
-  <div class="slot"><div class="pick">
-    <div class="row1"><div class="artist">Natasha Bedingfield</div><div class="time">4:30 – 5:30</div></div>
+  <div class="slot" data-nick="1"><div class="pick">
+    <div class="row1"><div class="artist">Natasha Bedingfield <span class="nicktag">👥 Nick</span></div><div class="time">4:30 – 5:30</div></div>
     <div class="stage">Tito's stage · weekend-2-only</div>
     <div class="note">"Unwritten" nostalgia — fun, singalong start.</div>
   </div></div>
 
-  <div class="slot"><div class="pick">
-    <div class="row1"><div class="artist">Labrinth</div><div class="time">6:30 – 7:30</div></div>
+  <div class="slot" data-nick="1"><div class="pick">
+    <div class="row1"><div class="artist">Labrinth <span class="nicktag">👥 Nick</span></div><div class="time">6:30 – 7:30</div></div>
     <div class="stage">Amex stage</div>
     <div class="note">Leave ~7:10 to make Miller Lite.</div>
   </div></div>
 
-  <div class="slot">
+  <div class="slot" data-nick="1">
     <div class="pick">
-      <div class="row1"><div class="artist">Leon Thomas</div><div class="time">7:15 – 8:15</div></div>
+      <div class="row1"><div class="artist">Leon Thomas <span class="nicktag">👥 Nick</span></div><div class="time">7:15 – 8:15</div></div>
       <div class="stage">Miller Lite stage</div>
       <div class="note">Alt-R&B — fits your RAYE/Weeknd edge. Catch from ~7:20, leave ~8:05 to make Kings of Leon.</div>
     </div>
     <div class="swap">
       <div class="slabel">⇄ Swap option</div>
-      <div class="row1"><div class="artist">The Chainsmokers</div><div class="time">7:30 – 8:30</div></div>
+      <div class="row1"><div class="artist">The Chainsmokers <span class="nicktag">👥 Nick</span></div><div class="time">7:30 – 8:30</div></div>
       <div class="stage">Snapchat stage</div>
       <div class="note">Take this if you want EDM energy over R&B smoothness.</div>
     </div>
   </div>
 
-  <div class="slot"><div class="pick star">
-    <div class="row1"><div class="artist">Kings of Leon <span class="stag">★ headliner</span> <span class="mustag">must watch</span></div><div class="time">8:15 – 9:05</div></div>
+  <div class="slot" data-nick="1"><div class="pick star">
+    <div class="row1"><div class="artist">Kings of Leon <span class="nicktag">👥 Nick</span> <span class="stag">★ headliner</span> <span class="mustag">must watch</span></div><div class="time">8:15 – 9:05</div></div>
     <div class="stage">T-Mobile stage · weekend-2-only</div>
     <div class="note">First 50 min — leave ~9:05 to cross to Amex.</div>
   </div></div>
 
-  <div class="slot"><div class="pick star">
-    <div class="row1"><div class="artist">Charli XCX <span class="stag">★ headliner</span> <span class="mustag">must watch</span></div><div class="time">9:10 – 10:00</div></div>
+  <div class="slot" data-nick="1"><div class="pick star">
+    <div class="row1"><div class="artist">Charli XCX <span class="nicktag">👥 Nick</span> <span class="stag">★ headliner</span> <span class="mustag">must watch</span></div><div class="time">9:10 – 10:00</div></div>
     <div class="stage">Amex stage</div>
     <div class="note">Last 50 min to close the night.</div>
   </div></div>
@@ -141,11 +155,11 @@
       <div class="vsmark">VS</div>
       <div class="opt"><div class="who">RÜFÜS DU SOL</div><div class="when">8:30 · Amex</div></div>
     </div>
-    <div class="nudge">Split it: Lorde 8:15–8:55 at T-Mobile, then RÜFÜS 9:00–10:00 at Amex. You miss RÜFÜS's first 30 — the price of catching both.</div>
+    <div class="nudge">Split it: Lorde 8:15–8:55 at T-Mobile, then RÜFÜS 9:00–10:00 at Amex. You miss RÜFÜS's first 30 — the price of catching both. Nick skips Lorde and camps at Amex (Lola Young → RÜFÜS), so you join him for the close.</div>
   </div>
 
-  <div class="slot"><div class="pick">
-    <div class="row1"><div class="artist">Balu Brigada</div><div class="time">2:30 – 3:15</div></div>
+  <div class="slot" data-nick="1"><div class="pick">
+    <div class="row1"><div class="artist">Balu Brigada <span class="nicktag">👥 Nick</span></div><div class="time">2:30 – 3:15</div></div>
     <div class="stage">T-Mobile stage</div>
     <div class="note">In your playlists — the only reason to come before 4pm. Optional.</div>
   </div></div>
@@ -163,22 +177,22 @@
     <div class="note">First 45 min — leave ~7:00 for Amex.</div>
   </div></div>
 
-  <div class="slot"><div class="pick">
-    <div class="row1"><div class="artist">Lola Young</div><div class="time">7:10 – 7:30</div></div>
+  <div class="slot" data-nick="1"><div class="pick">
+    <div class="row1"><div class="artist">Lola Young <span class="nicktag">👥 Nick</span></div><div class="time">7:10 – 7:30</div></div>
     <div class="stage">Amex stage</div>
     <div class="note">Catch her closing songs, then walk to T-Mobile.</div>
   </div></div>
 
   <div class="gap">7:30 – 8:15 · walk to T-Mobile for Lorde</div>
 
-  <div class="slot"><div class="pick star">
-    <div class="row1"><div class="artist">Lorde <span class="stag">★ headliner</span></div><div class="time">8:15 – 8:55</div></div>
+  <div class="slot" data-nick="1"><div class="pick star">
+    <div class="row1"><div class="artist">Lorde <span class="nicktag">👥 Nick</span> <span class="stag">★ headliner</span></div><div class="time">8:15 – 8:55</div></div>
     <div class="stage">T-Mobile stage</div>
     <div class="note">First 40 min — leave ~8:55 to cross to Amex.</div>
   </div></div>
 
-  <div class="slot"><div class="pick star">
-    <div class="row1"><div class="artist">RÜFÜS DU SOL <span class="stag">★ headliner</span> <span class="mustag">must watch</span></div><div class="time">9:00 – 10:00</div></div>
+  <div class="slot" data-nick="1"><div class="pick star">
+    <div class="row1"><div class="artist">RÜFÜS DU SOL <span class="nicktag">👥 Nick</span> <span class="stag">★ headliner</span> <span class="mustag">must watch</span></div><div class="time">9:00 – 10:00</div></div>
     <div class="stage">Amex stage</div>
     <div class="note">The closing hour — your #1 must-see of the weekend.</div>
   </div></div>
@@ -197,7 +211,7 @@
       <div class="vsmark">VS</div>
       <div class="opt"><div class="who">Twenty One Pilots</div><div class="when">8:30 · Amex</div></div>
     </div>
-    <div class="nudge">The xx fits your indie lane; take Twenty One Pilots if you want the bigger singalong to end the weekend.</div>
+    <div class="nudge">The xx fits your indie lane — but Nick's closing with Twenty One Pilots, so this is your one real split of the weekend. Take TOP if you want the bigger singalong together to end it.</div>
   </div>
 
   <div class="slot"><div class="pick">
@@ -211,39 +225,57 @@
     <div class="note">Leave ~6:20.</div>
   </div></div>
 
-  <div class="slot">
+  <div class="slot" data-nick="1">
     <div class="pick">
-      <div class="row1"><div class="artist">Fcukers</div><div class="time">6:30 – 7:30</div></div>
+      <div class="row1"><div class="artist">Fcukers <span class="nicktag">👥 Nick</span></div><div class="time">6:30 – 7:30</div></div>
       <div class="stage">Tito's stage</div>
       <div class="note">Their Tame Impala collab is in your rotation. Leave ~7:15.</div>
     </div>
     <div class="swap">
       <div class="slabel">⇄ Discover something new · 82%</div>
-      <div class="row1"><div class="artist">Geese</div><div class="time">6:20 – 7:20</div></div>
+      <div class="row1"><div class="artist">Geese <span class="nicktag">👥 Nick</span></div><div class="time">6:20 – 7:20</div></div>
       <div class="stage">T-Mobile stage</div>
       <div class="note">Chaotic NYC indie rock — your Interpol/Arcade Fire streak says yes. Then walk to Miller Lite for Parcels.</div>
     </div>
   </div>
 
-  <div class="slot">
+  <div class="slot" data-nick="1">
     <div class="pick star">
-      <div class="row1"><div class="artist">Parcels <span class="mustag">must watch</span></div><div class="time">7:20 – 8:35</div></div>
+      <div class="row1"><div class="artist">Parcels <span class="nicktag">👥 Nick</span> <span class="mustag">must watch</span></div><div class="time">7:20 – 8:35</div></div>
       <div class="stage">Miller Lite stage · straight from your daylist</div>
       <div class="note">Leave ~8:25 to get across the park for The xx.</div>
     </div>
     <div class="swap">
       <div class="slabel">⇄ Discover something new · 84%</div>
-      <div class="row1"><div class="artist">Blood Orange</div><div class="time">7:30 – 8:30</div></div>
+      <div class="row1"><div class="artist">Blood Orange <span class="nicktag">👥 Nick</span></div><div class="time">7:30 – 8:30</div></div>
       <div class="stage">BeatBox stage</div>
       <div class="note">Sleek indie-R&B — take this over Parcels if you're feeling R&B over disco-pop.</div>
     </div>
   </div>
 
-  <div class="slot"><div class="pick star">
-    <div class="row1"><div class="artist">The xx <span class="stag">★ headliner</span> <span class="mustag">must watch</span></div><div class="time">8:35 – 10:00</div></div>
+  <div class="slot" data-nick="1"><div class="pick star">
+    <div class="row1"><div class="artist">The xx <span class="nicktag">👥 Nick</span> <span class="stag">★ headliner</span> <span class="mustag">must watch</span></div><div class="time">8:35 – 10:00</div></div>
     <div class="stage">T-Mobile stage</div>
-  </div></div>
+  </div>
+    <div class="swap">
+      <div class="slabel">⇄ Nick's pick</div>
+      <div class="row1"><div class="artist">Twenty One Pilots <span class="nicktag">👥 Nick</span></div><div class="time">8:30 – close</div></div>
+      <div class="stage">Amex stage</div>
+      <div class="note">"Stressed Out" is in his all-time top tracks — his data says TOP over The xx, barely. Your one real split of the weekend.</div>
+    </div>
+  </div>
 </div>
+
+<script>
+document.querySelectorAll('.fbtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('.fbtn').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    document.body.classList.toggle('together', b.dataset.f === 'together');
+    window.scrollTo({top: 0});
+  });
+});
+</script>
 
 </body>
 </html>
