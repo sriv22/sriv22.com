@@ -234,7 +234,8 @@ async function toggleVote(btn){
     if (was) myPicks.add(room); else myPicks.delete(room);
     tallies[room] = Math.max(0, (tallies[room] || 0) + (was ? 1 : -1));
     paintVotes();
-    btn.querySelector(".vcount").textContent = "couldn't save — tap to retry";
+    const msg = "couldn't save (" + (e && e.message ? e.message : "error") + ") — tap to retry";
+    btn.querySelector(".vcount").textContent = msg;
     if (window.console) console.warn("vote save failed", e);
     btn.disabled = false;
     return;
