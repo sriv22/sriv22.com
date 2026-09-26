@@ -200,8 +200,16 @@ async function refreshVotes(){
       const cells = row.c || [];
       const v = cells[1] && cells[1].v;
       if (v == null || v === "") return;
-      const p = cells[2] && cells[2].v != null ? String(cells[2].v) : "";
-      latest[String(v)] = p.match(/\d+/g) || [];
+      // Checkbox answers land in one column per option, so collect every
+      // non-empty cell from the first picks column onward.
+      const picks = [];
+      for (let i = 2; i < cells.length; i++) {
+        const cv = cells[i] && cells[i].v;
+        if (cv == null || cv === "") continue;
+        const nums = String(cv).match(/\d+/g);
+        if (nums) for (const n of nums) picks.push(n);
+      }
+      latest[String(v)] = picks;
     });
     tallies = {};
     Object.keys(latest).forEach(v => { latest[v].forEach(r => { tallies[r] = (tallies[r] || 0) + 1; }); });
