@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sedona Girls Trip — Where Should We Stay?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --sand: #faf5ec; --card: #ffffff; --ink: #3b2d24; --muted: #8a7364;
+    --terra: #c05b3a; --terra-d: #a34a2e; --gold: #b98a1d; --green: #2e7d4f;
+    --line: #eadfce;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    background: var(--sand); color: var(--ink); line-height: 1.55;
+    max-width: 660px; margin: 0 auto; padding: 0 0 64px;
+  }
+  header { padding: 26px 22px 18px; }
+  header .kicker {
+    font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--terra); font-weight: 800;
+  }
+  header h1 { font-size: 27px; font-weight: 800; margin: 6px 0 4px; }
+  header p { font-size: 14px; color: var(--muted); }
+  section { padding: 0 14px; }
+  h2.section-title { font-size: 20px; font-weight: 800; margin: 26px 8px 4px; }
+  .section-sub { font-size: 13.5px; color: var(--muted); margin: 0 8px 14px; }
+
+  .booked {
+    background: var(--card); border: 2px solid var(--gold); border-radius: 20px;
+    overflow: hidden; box-shadow: 0 4px 18px rgba(185,138,29,.16); margin-bottom: 6px;
+  }
+  .booked .banner {
+    background: linear-gradient(135deg, #c99a1f, #a87b12); color: #fff;
+    font-weight: 800; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 10px 18px; display: flex; align-items: center; gap: 8px;
+  }
+  .booked .body { padding: 16px 18px 18px; }
+  .booked h3 { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
+  .booked .tag { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+
+  .gallery {
+    display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory;
+    border-radius: 14px; margin: 0 0 12px; -webkit-overflow-scrolling: touch;
+  }
+  .gallery img {
+    scroll-snap-align: start; flex: 0 0 88%; height: 230px; object-fit: cover;
+    border-radius: 14px; background: #e8dcc8;
+  }
+  .gallery img:only-child { flex-basis: 100%; }
+
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; margin: 12px 0; }
+  .fact { background: var(--sand); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; }
+  .fact .k { font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); font-weight: 700; }
+  .fact .v { font-size: 14px; font-weight: 700; margin-top: 2px; }
+  .vibe { font-size: 14px; color: #5c4a3d; background: #fdf9f1; border-left: 3px solid var(--terra);
+    padding: 10px 14px; border-radius: 0 12px 12px 0; margin: 12px 0; }
+  .btn {
+    display: inline-block; background: var(--terra); color: #fff; font-weight: 700; font-size: 15px;
+    padding: 12px 22px; border-radius: 999px; text-decoration: none; margin-top: 6px;
+  }
+  .btn:active { background: var(--terra-d); }
+  .btn.ghost { background: transparent; color: var(--terra); border: 2px solid var(--terra); }
+
+  .votebox {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 18px; box-shadow: 0 2px 10px rgba(59,45,36,.06);
+  }
+  .votebox iframe {
+    width: 100%; min-height: 860px; border: 1px solid var(--line); border-radius: 12px;
+    background: #fff; margin-top: 12px;
+  }
+  .vote-names { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
+  .vote-names span {
+    background: var(--sand); border: 1px solid var(--line); border-radius: 999px;
+    font-size: 12.5px; font-weight: 700; padding: 4px 12px; color: var(--terra-d);
+  }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    overflow: hidden; margin-bottom: 18px; box-shadow: 0 2px 10px rgba(59,45,36,.06);
+  }
+  .card .top { display: flex; gap: 12px; padding: 16px 16px 0; align-items: flex-start; }
+  .rank {
+    flex: 0 0 44px; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--terra); color: #fff; font-weight: 800; font-size: 19px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card h3 { font-size: 18px; font-weight: 800; line-height: 1.3; }
+  .card h3 a { color: var(--ink); text-decoration: none; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase;
+    border-radius: 999px; padding: 3px 10px; margin-top: 6px;
+  }
+  .badge.good { background: #e3f2e8; color: var(--green); }
+  .badge.warn { background: #fdeede; color: #b06a1a; }
+  .badge.deal { background: #e8f0fd; color: #2b5fc7; }
+  .card .pad { padding: 12px 16px 18px; }
+  .card .gallery { margin: 12px 16px 0; }
+  .pricerow { display: flex; align-items: baseline; gap: 10px; margin: 10px 0 2px; }
+  .price { font-size: 24px; font-weight: 800; color: var(--terra-d); }
+  .perperson { font-size: 13.5px; color: var(--muted); }
+  .pricenote { font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
+  .rating { font-size: 14px; font-weight: 700; margin: 6px 0; }
+  .beds { font-size: 14px; color: #5c4a3d; margin-bottom: 2px; }
+  .hottub { font-size: 14px; font-weight: 600; color: var(--green); margin: 6px 0; }
+  .caveat {
+    font-size: 13px; background: #fdf3e3; border: 1px solid #f0d9ae; color: #8a5a13;
+    border-radius: 10px; padding: 8px 12px; margin: 8px 0;
+  }
+  footer { text-align: center; font-size: 12.5px; color: var(--muted); padding: 26px 30px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="kicker">Sedona girls trip · Nov 12–15, 2026</div>
+  <h1>Where should we stay? 🏜️</h1>
+  <p>5 people · Sri, Amita, Alice, Melissa, Najla · Prices are exactly what Airbnb's price breakdown showed for Nov 12–15, 5 adults (checked Sep 26) — Airbnb lists no separate tax lines for these stays; the one before-tax total is flagged on its card.</p>
+</header>
+
+<section>
+  <div class="booked">
+    <div class="banner">✓ Booked — this one's locked in</div>
+    <div class="body">
+      <div class="gallery">
+        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1550754286022020662/original/a0f93b54-362c-4e46-b3ab-48957657327b.jpeg?im_w=1200" alt="Cowboy Cottage exterior" loading="lazy">
+        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1550754286022020662/original/30d3c791-30f2-4c50-9bd3-a889babd67fd.jpeg?im_w=720" alt="Cowboy Cottage interior" loading="lazy">
+        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1550754286022020662/original/3ab97154-26c9-465f-a428-f4fb5ac36005.jpeg?im_w=720" alt="Cowboy Cottage hot tub area" loading="lazy">
+      </div>
+      <h3>Historic Home w/Epic Views, West Sedona, &amp; HotTub!</h3>
+      <div class="tag">The "Cowboy Cottage" — a 107-year-old converted cowboy bunkhouse · hosted by Mindy, Superhost</div>
+      <div class="rating">★ 5.0 · 18 reviews · Guest favorite</div>
+      <div class="facts">
+        <div class="fact"><div class="k">Sleeps</div><div class="v">3 BR · 4 beds (kings)</div></div>
+        <div class="fact"><div class="k">Bathrooms</div><div class="v">2 full baths</div></div>
+        <div class="fact"><div class="k">Hot tub</div><div class="v">Private, fenced half-acre</div></div>
+        <div class="fact"><div class="k">Property</div><div class="v">Entire cottage, 1,650 sq ft</div></div>
+      </div>
+      <div class="vibe">Rustic-charming cabin in West Sedona near Airport Mesa — epic red-rock sunset views, a secluded hot tub, plus yoga and meditation decks. Check-in after 4 PM, checkout before 11 AM. Free cancellation before Oct 29.</div>
+      <a class="btn" href="https://www.airbnb.com/rooms/1550754286022020662">View on Airbnb →</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">Vote for your favorites 🗳️</h2>
+  <p class="section-sub">Type your name, check every place you like. Everyone's votes — with names — show up right here.</p>
+  <div class="votebox">
+    <div class="vote-names"><span>Alice</span><span>Amita</span><span>Melissa</span><span>Najla</span><span>Sri</span></div>
+    <iframe id="pollFrame" title="Sedona Airbnb vote" loading="lazy"></iframe>
+    <div style="margin-top:12px; text-align:center;">
+      <a class="btn ghost" id="pollLink" href="#">Open the vote in a new tab →</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">The 15 options</h2>
+  <p class="section-sub">Ranked by value for 5 people. The booked cottage above is our home base — these are the backups.</p>
+  <div id="list"></div>
+</section>
+
+<footer>
+  Prices are exactly what Airbnb's price breakdown showed for Nov 12–15, 2026, 5 adults. Airbnb shows no separate tax lines for these listings — the Chapel Rock total is before taxes, as flagged on its card.<br>
+  Made with 🌵 for the Sedona girls trip.
+</footer>
+
+<script>
+const POLL_URL = "https://cryptpad.fr/form/#/2/form/view/ruv0zG3GsrzUBiUwTvjV+jB-sk+tnxfBR2A3aQdjSto/";
+document.getElementById("pollFrame").src = POLL_URL;
+document.getElementById("pollLink").href = POLL_URL;
+
+const LISTINGS = [
+{rank:1, title:"Millie's Manor", url:"https://www.airbnb.com/rooms/1394980457892371620",
+ photos:["https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTM5NDk4MDQ1Nzg5MjM3MTYyMA==/original/c09b41ab-bba0-46fc-8491-f43c67b3af63.jpeg?im_w=720","https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTM5NDk4MDQ1Nzg5MjM3MTYyMA==/original/38d64544-fe0f-4a7e-8cee-0fb9b7a63cce.jpeg?im_w=720"],
+ price:"$1,561.90", pp:"$312 / person", priceNote:"Airbnb's exact breakdown total for 3 nights",
+ rating:"★ 5.0 · 47 reviews", beds:"3 bedrooms · 4 beds · 2.5 baths",
+ hotTub:"✓ Private hot tub + sauna + fire pit",
+ vibe:"Charming manor with a private hot tub, sauna, and fire pit — the best all-rounder for five people.",
+ badge:"Best value", badgeClass:"good"},
+{rank:2, title:"Sauna, Hot Tub, Fire Pit, BIG Views, Mini Golf", url:"https://www.airbnb.com/rooms/1628886817799622214",
+ photos:["https://a0.muscache.com/im/pictures/hosting/Hosting-1628886817799622214/original/9dbe7e0b-8c8c-44cb-8dfb-97ab126a96bb.jpeg",
+ "https://a0.muscache.com/im/pictures/hosting/Hosting-1628886817799622214/original/aaeadc6a-0ff9-4f20-8e95-110c69004e6f.jpeg",
+ "https://a0.muscache.com/im/pictures/hosting/Hosting-1628886817799622214/original/28aa805b-4315-4511-afaa-d7dcf1c2d2b0.jpeg"],
+ price:"$1,859.80", pp:"$372 / person", priceNote:"Airbnb's exact breakdown total for 3 nights (non-refundable rate; refundable $2,032)",
+ rating:"★ 5.0 · 38 reviews · Top 5%", beds:"3 bedrooms · 4 beds (king, queen, queen bunk) · 2.5 baths · sleeps 8",
+ hotTub:"✓ Private hot tub + barrel sauna, open 24 hrs",
+ vibe:"Resort-style fun house in the Chapel neighborhood — private hot tub, barrel sauna, fire pits, and mini-golf on a fenced deck overlooking the red rocks.",
+ badge:"Most fun", badgeClass:"good"},
+{rank:3, title:"Red Rock Views + Hot Tub | Walk to Trails", url:"https://www.airbnb.com/rooms/51235115",
+ photos:["https://a0.muscache.com/im/pictures/miso/Hosting-51235115/original/815dc1de-3ec5-4701-84a4-6fb987d48de0.jpeg?im_w=720","https://a0.muscache.com/im/pictures/miso/Hosting-51235115/original/f31056ff-474f-482a-bf63-fe9f9ea35269.jpeg?im_w=720"],
+ price:"$1,623", pp:"$325 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 4.97 · 273 reviews", beds:"3 bedrooms · 4 beds · 2.5 baths",
+ hotTub:"✓ Hot tub",
+ vibe:"Wake up to red rock views and walk straight to the trails — a proven crowd-pleaser with 273 reviews.",
+ badge:"", badgeClass:""},
+{rank:4, title:"Oasis at Chapel Rock – Iconic Views & Hot Tub", url:"https://www.airbnb.com/rooms/622465418778779061",
+ photos:["https://a0.muscache.com/im/pictures/hosting/Hosting-622465418778779061/original/d4fca2f6-406e-4c31-b7ca-e898c06ab1ce.png",
+ "https://a0.muscache.com/im/pictures/hosting/Hosting-622465418778779061/original/b75faf67-6b15-440c-995d-b0ef7e1c8308.jpeg",
+ "https://a0.muscache.com/im/pictures/hosting/Hosting-622465418778779061/original/13d21f40-c56d-4e50-8de7-c17b130ac16e.jpeg"],
+ price:"$1,976", pp:"$395 / person", priceNote:"Airbnb's breakdown: $1,976.14 total before taxes — AZ lodging taxes get added at checkout (amount not shown); refundable option $2,061",
+ rating:"★ 4.97 · 37 reviews · Top guest favorite", beds:"3 bedrooms · 3 beds (king, queen, queen) · 4 baths — every suite en-suite",
+ hotTub:"✓ Private jacuzzi with red rock views",
+ vibe:"Elegant three-suite retreat beneath Chapel Rock — four bathrooms means zero morning-bathroom wars.",
+ badge:"4 bathrooms 🙌", badgeClass:"good"},
+{rank:5, title:"4 KING beds + 3BA", url:"https://www.airbnb.com/rooms/890041072367859642",
+ photos:["https://a0.muscache.com/im/pictures/miso/Hosting-890041072367859642/original/ec7479f9-29af-44df-bdac-1b9593177c77.jpeg?im_w=720","https://a0.muscache.com/im/pictures/miso/Hosting-890041072367859642/original/4ea942de-9858-46e7-ad5e-cd10bcf6e3b5.jpeg?im_w=720"],
+ price:"$2,192", pp:"$438 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 5.0 · 92 reviews", beds:"4 bedrooms · 4 king beds · 3 baths",
+ hotTub:"✓ Hot tub",
+ vibe:"Four king bedrooms and three baths — one pair shares a king, everyone else gets their own room.",
+ badge:"", badgeClass:""},
+{rank:6, title:"Stunning 3 bedroom Sedona Home", url:"https://www.airbnb.com/rooms/1014125072119534531",
+ photos:["https://a0.muscache.com/im/pictures/miso/Hosting-1014125072119534531/original/9401a288-e607-4ed4-a51a-90fcbe83921c.jpeg",
+ "https://a0.muscache.com/im/pictures/miso/Hosting-1014125072119534531/original/db483e75-d61b-4c7e-b800-d276da7e04bb.jpeg",
+ "https://a0.muscache.com/im/pictures/miso/Hosting-1014125072119534531/original/f2883776-6c01-458b-910b-f7d3c0fea5a5.jpeg"],
+ price:"$975", pp:"$195 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 4.87 · 95 reviews · Guest favorite", beds:"3 bedrooms · 4 beds (king, queen, queen + sofa bed) · 2 baths · sleeps 8",
+ hotTub:"✓ Private hot tub + fire pit in fenced backyard",
+ vibe:"Standalone West Sedona home with a private fenced backyard, hot tub, and fire pit — unbeatable at under $200 a person.",
+ badge:"Cheapest 💸", badgeClass:"deal"},
+{rank:7, title:"Vortex Hiking House", url:"https://www.airbnb.com/rooms/1434288",
+ photos:["https://a0.muscache.com/im/pictures/hosting/Hosting-1434288/original/e9e3b5bc-d2c1-47a1-b751-f630bdbad2dd.png?im_w=720","https://a0.muscache.com/im/pictures/hosting/Hosting-1434288/original/f45381ff-7033-4957-8d06-839b2bbdaf80.png?im_w=720"],
+ price:"$1,499", pp:"$300 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 4.95 · 711 reviews", beds:"3 bedrooms · 4 beds · 2 baths",
+ hotTub:"✓ Hot tub (note: open 8 AM – 9 PM only)",
+ vibe:"Classic Sedona hiking base with hundreds of happy reviews — just plan hot tub time before 9 PM.",
+ badge:"", badgeClass:""},
+{rank:8, title:"Sunrise House", url:"https://www.airbnb.com/rooms/25746895",
+ photos:["https://a0.muscache.com/im/pictures/miso/Hosting-25746895/original/3eaccce3-2b8e-407c-8761-730c862246e9.jpeg?im_w=720","https://a0.muscache.com/im/pictures/miso/Hosting-25746895/original/915ff046-cb98-448a-9947-586c6ff4729f.jpeg?im_w=720"],
+ price:"$1,623.40", pp:"$325 / person", priceNote:"Airbnb's exact breakdown total for 3 nights (non-refundable rate; refundable $1,771)",
+ rating:"★ 4.89 · 304 reviews", beds:"4 bedrooms · 5 beds · 2 baths",
+ hotTub:"✓ Hot tub",
+ vibe:"Spacious 4-bedroom with five real beds — room for everyone to spread out.",
+ badge:"", badgeClass:""},
+{rank:9, title:"Sedona Thunder Mtn Villa | Pano Views & Hot Tub", url:"https://www.airbnb.com/rooms/800990063219739868",
+ photos:["https://a0.muscache.com/im/pictures/miso/Hosting-800990063219739868/original/5161aa40-d468-4c95-ae99-6ea461bed0e9.jpeg",
+ "https://a0.muscache.com/im/pictures/miso/Hosting-800990063219739868/original/89a031f0-be7f-4f80-9992-e4d5bdb76bdb.jpeg",
+ "https://a0.muscache.com/im/pictures/miso/Hosting-800990063219739868/original/1311a439-48aa-4430-bac5-b7757d7526f5.jpeg"],
+ price:"$2,077", pp:"$415 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 4.94 · 143 reviews · Top guest favorite", beds:"3 bedrooms · 4 beds (king + sofa bed, king, king) · 2.5 baths",
+ hotTub:"✓ Private hot tub in enclosed courtyard — made for stargazing",
+ vibe:"Architectural showpiece with 14-ft ceilings on a West Sedona ridge — panoramic red rock views from every angle.",
+ badge:"", badgeClass:"", caveat:"One of the four 'beds' is a sofa bed."},
+{rank:10, title:"West Sedona Mid-Century", url:"https://www.airbnb.com/rooms/1050113496693565206",
+ photos:["https://a0.muscache.com/im/pictures/prohost-api/Hosting-1050113496693565206/original/ad807513-b015-4b2f-afb4-9cf565221cef.jpeg?im_w=720","https://a0.muscache.com/im/pictures/prohost-api/Hosting-1050113496693565206/original/c1c7b342-3bf7-4725-a8f7-6f8bb3974b7e.jpeg?im_w=720"],
+ price:"$2,212", pp:"$442 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 4.99 · 121 reviews", beds:"4 bedrooms · 5 beds · 2.5 baths",
+ hotTub:"✓ Hot tub",
+ vibe:"Stylish mid-century home with a near-perfect rating — great bones for a group trip.",
+ badge:"", badgeClass:""},
+{rank:11, title:"RidgeTop Retreat, Secluded w/ Expansive View", url:"https://www.airbnb.com/rooms/984234882509163776",
+ photos:["https://a0.muscache.com/im/pictures/miso/Hosting-984234882509163776/original/22cf9d35-99ad-4e05-9c3a-b012ec098624.jpeg",
+ "https://a0.muscache.com/im/pictures/miso/Hosting-984234882509163776/original/88bdaa5e-ac58-4c03-9db0-d13cba1287d9.jpeg",
+ "https://a0.muscache.com/im/pictures/miso/Hosting-984234882509163776/original/853d74ff-cb55-4d9a-8585-14ed9eee2960.jpeg"],
+ price:"$2,811", pp:"$562 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 5.0 · 85 reviews · Top 1%", beds:"3 bedrooms · 4 beds (king, 2 singles, king) · 3 baths · sleeps 6",
+ hotTub:"✓ Private hot tub tucked among the trees, open 24 hrs",
+ vibe:"Secluded mid-century modern retreat on a hill above Oak Creek — the splurge pick with unobstructed red rock views.",
+ badge:"Splurge ✨", badgeClass:"warn"},
+{rank:12, title:"Casa de Arboles", url:"https://www.airbnb.com/rooms/1600428602975587264",
+ photos:["https://a0.muscache.com/im/pictures/hosting/Hosting-1600428602975587264/original/46f58e47-cb0a-46dd-b56a-e87873399afd.jpeg?im_w=720","https://a0.muscache.com/im/pictures/hosting/Hosting-1600428602975587264/original/d2d97338-4bef-4e53-a0ce-f006d606e439.jpeg?im_w=720"],
+ price:"$2,418", pp:"$484 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 5.0 · 18 reviews", beds:"4 bedrooms · 7 beds (incl. sofa beds) · 3.5 baths",
+ hotTub:"✓ Hot tub",
+ vibe:"Main house plus casita with 3.5 baths and beds for a crowd — a newer listing with a perfect score so far.",
+ badge:"", badgeClass:""},
+{rank:13, title:"Red Rock Paradise", url:"https://www.airbnb.com/rooms/48527324",
+ photos:["https://a0.muscache.com/im/pictures/miso/Hosting-48527324/original/9fdb6421-b763-470b-80e4-9d220b60aa05.jpeg","__P13b__"],
+ price:"$2,286", pp:"$457 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 4.97 · 249 reviews", beds:"3 bedrooms · 3 king beds · 3 baths",
+ hotTub:"✓ Hot tub",
+ vibe:"Three king suites and three baths — dreamy if everyone's happy sharing kings.",
+ badge:"", badgeClass:""},
+{rank:14, title:"Sedona Red Rock Views + Pet Friendly", url:"https://www.airbnb.com/rooms/1153820005577541776",
+ photos:["https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTE1MzgyMDAwNTU3NzU0MTc3Ng%3D%3D/original/1a50bc9c-6020-46f1-ad82-baf7bbf85ac7.jpeg?im_w=720","https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTE1MzgyMDAwNTU3NzU0MTc3Ng%3D%3D/original/c56cd39b-c2df-4328-99ce-a9a60346d16a.jpeg?im_w=720"],
+ price:"$2,579", pp:"$516 / person", priceNote:"All-in total for 3 nights",
+ rating:"★ 5.0 · 67 reviews", beds:"4 bedrooms · 6 beds · 2.5 baths",
+ hotTub:"✓ Hot tub",
+ vibe:"Big 4-bedroom with red rock views and a pet-friendly policy — no dog on this trip, but the space is real.",
+ badge:"", badgeClass:""},
+{rank:15, title:"West Sedona: Hot tub, Newly Remodeled!", url:"https://www.airbnb.com/rooms/32932754",
+ photos:["https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MzI5MzI3NTQ=/original/85906184-716f-4f61-8624-3950d76abc11.jpeg?im_w=720","https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MzI5MzI3NTQ=/original/e9fece81-b7c2-4658-882b-0594093863c9.jpeg?im_w=720"],
+ price:"$1,175.60", pp:"$235 / person", priceNote:"Airbnb's exact breakdown total for 3 nights (non-refundable rate; refundable $1,284)",
+ rating:"★ 4.9 · 361 reviews", beds:"3 bedrooms · 3 beds · 2 baths",
+ hotTub:"✓ Hot tub",
+ vibe:"Newly remodeled and budget-friendly — but read the fine print first.",
+ badge:"Not fully private ⚠️", badgeClass:"warn",
+ caveat:"This is the upper half of a house (downstairs excluded) and an occupied RV may be on the property — it does not meet the private-property bar."}
+];
+
+const list = document.getElementById("list");
+LISTINGS.forEach(l => {
+  const photos = l.photos.filter(p => !p.startsWith("__")).map(p =>
+    `<img src="${p}" alt="${l.title}" loading="lazy">`).join("");
+  const badge = l.badge ? `<span class="badge ${l.badgeClass}">${l.badge}</span><br>` : "";
+  const caveat = l.caveat ? `<div class="caveat">⚠️ ${l.caveat}</div>` : "";
+  list.insertAdjacentHTML("beforeend", `
+  <div class="card">
+    ${photos ? `<div class="gallery">${photos}</div>` : ""}
+    <div class="top">
+      <div class="rank">${l.rank}</div>
+      <div><h3><a href="${l.url}">${l.title}</a></h3>${badge}</div>
+    </div>
+    <div class="pad">
+      <div class="pricerow"><span class="price">${l.price}</span><span class="perperson">${l.pp}</span></div>
+      <div class="pricenote">${l.priceNote}</div>
+      <div class="rating">${l.rating}</div>
+      <div class="beds">${l.beds}</div>
+      <div class="hottub">${l.hotTub}</div>
+      ${caveat}
+      <div class="vibe">${l.vibe}</div>
+      <a class="btn" href="${l.url}">View on Airbnb →</a>
+    </div>
+  </div>`);
+});
+</script>
+</body>
+</html>
