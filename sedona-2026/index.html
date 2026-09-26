@@ -167,23 +167,46 @@ try {
   ballotId = localStorage.getItem("sedona_ballot");
 } catch (e) {}
 function newId(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : "v-"+Date.now()+"-"+Math.random().toString(16).slice(2); }
+function saveIds(){ try { if (voterId) localStorage.setItem("sedona_voter", voterId); if (ballotId) localStorage.setItem("sedona_ballot", ballotId); } catch (e) {} }
+
+async function apiSave(payload){
+  if (ballotId) {
+    const r = await fetch(VOTE_API + "/" + ballotId, {
+      method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+    });
+    if (r.status === 404) ballotId = null; // ballot vanished server-side; recreate below
+    else if (!r.ok) throw new Error("put " + r.status);
+  }
+  if (!ballotId) {
+    const r = await fetch(VOTE_API, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+    });
+    if (!r.ok) throw new Error("post " + r.status);
+    const d = await r.json();
+    ballotId = d._id;
+  }
+  saveIds();
+}
 
 async function refreshVotes(){
   try {
-    const docs = await (await fetch(VOTE_API)).json();
+    const r = await fetch(VOTE_API);
+    if (!r.ok) throw new Error("get " + r.status);
+    const docs = await r.json();
     tallies = {};
     let mine = null;
     docs.forEach(d => {
-      (d.picks || []).forEach(r => { tallies[r] = (tallies[r] || 0) + 1; });
+      (d.picks || []).forEach(x => { tallies[x] = (tallies[x] || 0) + 1; });
       if (voterId && d.voter === voterId) mine = d;
     });
     if (mine) {
       ballotId = mine._id;
-      try { localStorage.setItem("sedona_ballot", ballotId); } catch (e) {}
       myPicks = new Set(mine.picks || []);
+      saveIds();
     }
     paintVotes();
   } catch (e) {
+    if (window.console) console.warn("vote refresh failed", e);
     document.querySelectorAll(".votebtn .vcount").forEach(s => { s.textContent = "votes unavailable"; });
   }
 }
@@ -196,36 +219,34 @@ function paintVotes(){
 }
 async function toggleVote(btn){
   const room = btn.dataset.room;
-  if (!room) return;
+  if (!room || btn.disabled) return;
+  const was = myPicks.has(room);
+  // optimistic update so the tap feels instant
+  if (was) myPicks.delete(room); else myPicks.add(room);
+  tallies[room] = Math.max(0, (tallies[room] || 0) + (was ? -1 : 1));
+  paintVotes();
   btn.disabled = true;
   try {
-    if (!voterId) { voterId = newId(); try { localStorage.setItem("sedona_voter", voterId); } catch (e) {} }
-    const picks = new Set(myPicks);
-    if (picks.has(room)) picks.delete(room); else picks.add(room);
-    const payload = { voter: voterId, picks: [...picks], updated: Date.now() };
-    if (ballotId) {
-      const res = await fetch(VOTE_API + "/" + ballotId, {
-        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
-      });
-      if (res.status === 404) ballotId = null; // ballot vanished server-side; recreate below
-      else if (!res.ok) throw new Error("save failed");
-    }
-    if (!ballotId) {
-      const d = await (await fetch(VOTE_API, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
-      })).json();
-      ballotId = d._id;
-      try { localStorage.setItem("sedona_ballot", ballotId); } catch (e) {}
-    }
-    myPicks = picks;
-  } catch (e) { /* keep old state; counts will refresh */ }
+    if (!voterId) voterId = newId();
+    await apiSave({ voter: voterId, picks: [...myPicks], updated: Date.now() });
+  } catch (e) {
+    // revert optimistic update; tell the user to retry
+    if (was) myPicks.add(room); else myPicks.delete(room);
+    tallies[room] = Math.max(0, (tallies[room] || 0) + (was ? 1 : -1));
+    paintVotes();
+    btn.querySelector(".vcount").textContent = "couldn't save — tap to retry";
+    if (window.console) console.warn("vote save failed", e);
+    btn.disabled = false;
+    return;
+  }
   btn.disabled = false;
   refreshVotes();
 }
-document.addEventListener("click", e => {
-  const b = e.target.closest(".votebtn");
-  if (b) toggleVote(b);
-});
+function wireVotes(){
+  document.querySelectorAll(".votebtn").forEach(b => {
+    b.addEventListener("click", ev => { ev.preventDefault(); toggleVote(b); });
+  });
+}
 
 const LISTINGS = [
 {rank:1, title:"Millie's Manor", url:"https://www.airbnb.com/rooms/1394980457892371620",
@@ -373,6 +394,7 @@ LISTINGS.forEach(l => {
   </div>`);
 });
 refreshVotes();
+wireVotes();
 setInterval(refreshVotes, 45000);
 </script>
 </body>
