@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>vote diag</title></head>
+<body style="font-family:monospace;padding:20px">
+<h2>Vote backend diagnostics</h2>
+<div id="out">running…</div>
+<script>
+const EP = "https://crudcrud.com/api/44f7f899811442a481db44b2923eb6aa/votes";
+const out = document.getElementById("out");
+function line(t){ out.innerHTML += "<p>" + t + "</p>"; }
+(async () => {
+  out.innerHTML = "";
+  line("UA: " + navigator.userAgent.slice(0, 80));
+  // 1. GET
+  try {
+    const r = await fetch(EP);
+    line("GET status: " + r.status);
+  } catch (e) { line("GET failed: " + e.message); }
+  // 2. OPTIONS (explicit, like a preflight)
+  try {
+    const r = await fetch(EP, { method: "OPTIONS" });
+    line("OPTIONS status: " + r.status + " ACAO: " + r.headers.get("access-control-allow-origin"));
+  } catch (e) { line("OPTIONS failed: " + e.message); }
+  // 3. POST JSON (this triggers a real preflight)
+  try {
+    const r = await fetch(EP, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ voter: "diag", picks: [] }) });
+    line("POST status: " + r.status);
+    if (r.ok) {
+      const d = await r.json();
+      line("POST created id: " + d._id);
+      await fetch(EP + "/" + d._id, { method: "DELETE" });
+      line("cleanup DELETE sent");
+    } else {
+      line("POST body: " + (await r.text()).slice(0, 120));
+    }
+  } catch (e) { line("POST failed: " + e.name + ": " + e.message); }
+  line("done");
+})();
+</script>
+</body></html>
